@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Word = require('./models/Words');
 
 router.get('/', (req, res) => {
   Word.find({}).then(words => {
@@ -8,10 +9,10 @@ router.get('/', (req, res) => {
 });
 
 //add a new word
-router.delete('/addWord', (req, res) => {
-  const { word, definition } = req.body;
+router.post('/addword', (req, res) => {
+  // const { word, definition } = req.body;
 
-  if (!word || !definition) {
+  if (!req.body.word || !req.body.definition) {
     return res.status(500).json({ message: 'All Inputs must be filled' });
   }
 
@@ -37,18 +38,19 @@ router.delete('/addWord', (req, res) => {
     .catch(err => res.status(500).json({ message: 'Server Error' }, err));
 });
 
-router.get('/findWord', (req, res) => {
+router.get('/findword', (req, res) => {
   res.render('findWord', { word: null });
 });
 
-router.get('/foundWord', (req, res) => {
-  Word.findOne({ word: req.query.word }).then(word => {
+router.get('/foundword', (req, res) => {
+  Word.findOne({ word: req.query.word })
+  .then(word => {
     if (word) {
       //   res.json(word);
       console.log(word);
-      res.render('findWord', { word });
+      return res.render('findWord', { word });
     } else {
-      res.json({ message: 'Word not found' });
+      return res.json({ message: 'Word not found' });
     }
   });
 });
